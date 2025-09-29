@@ -11,3 +11,11 @@ body {
     .date-slide.active {
         display: block;
     }
+
+.division-container {
+    display: none;
+}
+
+    .division-container.active {
+        display: flex;
+    }

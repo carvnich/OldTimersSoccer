@@ -4,6 +4,9 @@ namespace OldTimersSoccer.Models
 {
     public class Standing
     {
+        [JsonPropertyName("schedule_type")]
+        public string ScheduleType { get; set; }
+
         [JsonPropertyName("division_id")]
         public string DivisionId { get; set; }
 
