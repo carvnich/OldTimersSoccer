@@ -23,16 +23,18 @@ namespace OldTimersSoccer.Controllers
             return View(standings);
         }
 
-        public async Task<IActionResult> Standings()
+        public async Task<IActionResult> Standings(string division)
         {
             var standings = await _soccerService.GetStandingsAsync();
-            return View(standings);
+            ViewBag.Division = division;
+            return PartialView("_StandingsPartial", standings);
         }
 
-        public async Task<IActionResult> Scorers()
+        public async Task<IActionResult> Scorers(string division)
         {
             var scorers = await _soccerService.GetScorersAsync();
-            return View(scorers);
+            ViewBag.Division = division;
+            return PartialView("_ScorersPartial", scorers);
         }
 
         public async Task<IActionResult> Players(string teamId)

@@ -1,0 +1,27 @@
+﻿@model List<OldTimersSoccer.Models.Scorer>
+@{
+    var currentDivision = ViewBag.Division as string;
+}
+<table class="table border-0" style="border-collapse: collapse;">
+    <thead>
+        <tr style="border-bottom: 2px solid #000000;">
+            <th style="border: none;">Player</th>
+            <th style="border: none;">Team</th>
+            <th style="border: none;">Goals</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var rank = 1;
+        }
+        @foreach (var scorer in Model.Where(s => s.DivisionId == currentDivision).OrderByDescending(s => int.Parse(s.TotalGoals)))
+        {
+            <tr>
+                <td style="border: none;">@scorer.PlayerFirstName @scorer.PlayerLastName</td>
+                <td style="border: none;">@scorer.TeamName</td>
+                <td style="border: none;">@scorer.TotalGoals</td>
+            </tr>
+            rank++;
+        }
+    </tbody>
+</table>
