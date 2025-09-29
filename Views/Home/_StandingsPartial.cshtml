@@ -20,15 +20,15 @@
         @foreach (var team in Model.Where(t => t.DivisionId == currentDivision))
         {
             <tr class="text-center">
-                <td class="text-start">@team.TeamName</td>
-                <td>@team.GamesPlayed</td>
-                <td class="d-none d-md-table-cell">@team.WinsTotal</td>
-                <td class="d-none d-md-table-cell">@team.DrawsTotal</td>
-                <td class="d-none d-md-table-cell">@team.LosesTotal</td>
-                <td class="d-none d-md-table-cell">@team.GoalsFor</td>
-                <td class="d-none d-md-table-cell">@team.GoalsAgainst</td>
-                <td>@team.GoalsDiff</td>
-                <td>@team.PointsTotal</td>
+                <td class="text-start border-0">@team.TeamName</td>
+                <td class="border-0">@team.GamesPlayed</td>
+                <td class="d-none d-md-table-cell border-0">@team.WinsTotal</td>
+                <td class="d-none d-md-table-cell border-0">@team.DrawsTotal</td>
+                <td class="d-none d-md-table-cell border-0">@team.LosesTotal</td>
+                <td class="d-none d-md-table-cell border-0">@team.GoalsFor</td>
+                <td class="d-none d-md-table-cell border-0">@team.GoalsAgainst</td>
+                <td class="border-0">@team.GoalsDiff</td>
+                <td class="border-0">@team.PointsTotal</td>
             </tr>
         }
     </tbody>

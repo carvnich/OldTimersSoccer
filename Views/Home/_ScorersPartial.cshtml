@@ -14,9 +14,9 @@
         @foreach (var scorer in Model.Where(s => s.DivisionId == currentDivision).OrderByDescending(s => int.Parse(s.TotalGoals)))
         {
             <tr>
-                <td>@scorer.PlayerFirstName @scorer.PlayerLastName</td>
-                <td class="d-none d-md-table-cell">@scorer.TeamName</td>
-                <td class="text-center">@scorer.TotalGoals</td>
+                <td class="border-0">@scorer.PlayerFirstName @scorer.PlayerLastName</td>
+                <td class="d-none d-md-table-cell border-0">@scorer.TeamName</td>
+                <td class="text-center border-0">@scorer.TotalGoals</td>
             </tr>
         }
     </tbody>

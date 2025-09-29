@@ -3,3 +3,11 @@
 body {
     font-family: 'Poppins', sans-serif;
 }
+
+.date-slide {
+    display: none;
+}
+
+    .date-slide.active {
+        display: block;
+    }
