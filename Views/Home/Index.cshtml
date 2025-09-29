@@ -1,8 +1,59 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<OldTimersSoccer.Models.Standing>
+@{
+    ViewData["Title"] = "Soccer Standings";
+    var divisions = Model.Select(s => s.DivisionId).Distinct().ToList();
+    var currentDivision = ViewBag.Division as string ?? divisions.FirstOrDefault();
+    var standings = Model.Where(s => s.DivisionId == currentDivision).ToList();
 }
+<div class="container">
+    <h1>Soccer Standings - @(standings.FirstOrDefault()?.DivisionName ?? "All Divisions")</h1>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <form method="get" class="mb-3">
+        <div class="btn-group" role="group" aria-label="Division selection">
+            @foreach (var division in divisions)
+            {
+                var imageName = division.Replace(" DIVISION", "").ToLower();
+                <input type="radio" class="btn-check" name="division" id="@division" value="@division" autocomplete="off" @(division == currentDivision ? "checked" : "") onchange="this.form.submit()">
+                <label class="btn btn-secondary" for="@division">
+                    <img src="~/images/div@(imageName).png" alt="@division" style="height: 175px;">
+                </label>
+            }
+        </div>
+    </form>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead class="table-dark">
+                <tr>
+                    <th>Pos</th>
+                    <th>Team</th>
+                    <th>GP</th>
+                    <th>W</th>
+                    <th>D</th>
+                    <th>L</th>
+                    <th>GF</th>
+                    <th>GA</th>
+                    <th>GD</th>
+                    <th>Pts</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var team in standings)
+                {
+                    <tr>
+                        <td><strong>@team.TeamStanding</strong></td>
+                        <td>@team.TeamName</td>
+                        <td>@team.GamesPlayed</td>
+                        <td>@team.WinsTotal</td>
+                        <td>@team.DrawsTotal</td>
+                        <td>@team.LosesTotal</td>
+                        <td>@team.GoalsFor</td>
+                        <td>@team.GoalsAgainst</td>
+                        <td>@team.GoalsDiff</td>
+                        <td><strong>@team.PointsTotal</strong></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 </div>
