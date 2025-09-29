@@ -1,34 +1,34 @@
 ﻿@model List<OldTimersSoccer.Models.Standing>
 @{
-    var currentDivision = ViewBag.Division as string ?? Model.Select(s => s.DivisionId).Distinct().FirstOrDefault();
+    var currentDivision = ViewBag.Division as string;
 }
-<table class="table border-0" style="border-collapse: collapse;">
+<table class="table border-0 fs-5">
     <thead>
-        <tr style="border-bottom: 2px solid #000000;">
-            <th style="border: none;">Team</th>
-            <th style="border: none;">GP</th>
-            <th style="border: none;">W</th>
-            <th style="border: none;">D</th>
-            <th style="border: none;">L</th>
-            <th style="border: none;">GF</th>
-            <th style="border: none;">GA</th>
-            <th style="border: none;">GD</th>
-            <th style="border: none;">Pts</th>
+        <tr style="border-bottom: 2px solid #000;">
+            <th>Team</th>
+            <th>GP</th>
+            <th class="d-none d-md-table-cell">W</th>
+            <th class="d-none d-md-table-cell">D</th>
+            <th class="d-none d-md-table-cell">L</th>
+            <th class="d-none d-md-table-cell">GF</th>
+            <th class="d-none d-md-table-cell">GA</th>
+            <th>+/-</th>
+            <th>Pts</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var team in Model)
+        @foreach (var team in Model.Where(t => t.DivisionId == currentDivision))
         {
-            <tr data-division="@team.DivisionId" style="display: @(team.DivisionId == currentDivision ? "table-row" : "none")">
-                <td style="border: none;">@team.TeamName</td>
-                <td style="border: none;">@team.GamesPlayed</td>
-                <td style="border: none;">@team.WinsTotal</td>
-                <td style="border: none;">@team.DrawsTotal</td>
-                <td style="border: none;">@team.LosesTotal</td>
-                <td style="border: none;">@team.GoalsFor</td>
-                <td style="border: none;">@team.GoalsAgainst</td>
-                <td style="border: none;">@team.GoalsDiff</td>
-                <td style="border: none;">@team.PointsTotal</td>
+            <tr class="text-center">
+                <td class="text-start">@team.TeamName</td>
+                <td>@team.GamesPlayed</td>
+                <td class="d-none d-md-table-cell">@team.WinsTotal</td>
+                <td class="d-none d-md-table-cell">@team.DrawsTotal</td>
+                <td class="d-none d-md-table-cell">@team.LosesTotal</td>
+                <td class="d-none d-md-table-cell">@team.GoalsFor</td>
+                <td class="d-none d-md-table-cell">@team.GoalsAgainst</td>
+                <td>@team.GoalsDiff</td>
+                <td>@team.PointsTotal</td>
             </tr>
         }
     </tbody>

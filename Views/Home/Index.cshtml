@@ -1,12 +1,13 @@
 ﻿@model List<OldTimersSoccer.Models.Standing>
 @{
-    var divisions = Model.Select(s => s.DivisionId).Distinct().ToList();
+    var divisions = Model.Select(s => s.DivisionId).Distinct().OrderBy(d => d).ToList();
     var currentDivision = ViewBag.Division as string ?? divisions.FirstOrDefault();
+    var displayDivision = currentDivision?.Replace(" DIVISION", "");
 }
 <div class="position-relative overflow-hidden" style="height: 35vh; background-image: url('/images/hero4.png'); background-size: cover; background-position: center;">
     <div class="position-absolute bottom-0 start-0 w-100 d-flex justify-content-between align-items-end p-4 text-white">
-        <h1 class="display-4 fw-bold m-0">Old Timers Soccer League</h1>
-        <div class="text-end">
+        <h1 class="display-2">Old Timers Soccer League</h1>
+        <div class="text-end fs-5">
             <p class="m-0">Hamilton Italian Centre</p>
             <p class="m-0">420 Crerar Dr</p>
             <p class="m-0">Hamilton, ON L9A 5K3</p>
@@ -15,40 +16,73 @@
     </div>
 </div>
 <div class="container-fluid px-4">
-    <h2 class="mt-4 mb-3">2024-2025 Season</h2>
-    <div class="mb-4">
-        <h3 class="mb-3">Select Division</h3>
-        <div class="d-flex justify-content-between" role="group" aria-label="Division selection">
+    <div class="py-4">
+        <h1 class="mb-3">Hamilton's Top Soccer Competition</h1>
+        <div class="d-flex justify-content-between overflow-auto" style="gap: 0.5rem;">
             @foreach (var division in divisions)
             {
                 var imageName = division.Replace(" DIVISION", "").ToLower();
-                <input type="radio" class="btn-check" name="division" id="@division" value="@division" autocomplete="off" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
-                <label class="btn btn-primary flex-fill mx-1" for="@division">
-                    <img src="~/images/div@(imageName).png" alt="@division" style="height: 100px;">
-                </label>
+                <input type="radio" class="btn-check" name="division" id="@division" value="@division" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
+                <label class="btn btn-primary flex-fill mx-1" for="@division"><img src="~/images/div@(imageName).png" alt="@division" style="height: 100px;"></label>
             }
         </div>
     </div>
-    <div class="mb-4">
-        <h3 class="mb-3">View Statistics</h3>
+    <div class="py-4">
+        <div class="text-center mb-3">
+            <h2 id="divisionDisplay">Division @displayDivision</h2>
+            <h5>2025</h5>
+        </div>
         <div class="d-flex justify-content-center">
-            <div class="btn-group" role="group">
-                <input type="radio" class="btn-check" name="view" id="viewStandings" value="standings" autocomplete="off" checked onchange="toggleView('standings')">
+            <div class="btn-group">
+                <input type="radio" class="btn-check" name="view" id="viewStandings" checked onchange="toggleView('standings')">
                 <label class="btn btn-outline-primary" for="viewStandings">Standings</label>
-                <input type="radio" class="btn-check" name="view" id="viewScorers" value="scorers" autocomplete="off" onchange="toggleView('scorers')">
+                <input type="radio" class="btn-check" name="view" id="viewScorers" onchange="toggleView('scorers')">
                 <label class="btn btn-outline-primary" for="viewScorers">Top Scorers</label>
             </div>
         </div>
     </div>
     <div class="d-flex justify-content-center pb-5">
-        <div style="width: 50%;">
-            <div id="standingsTable">
-                @await Html.PartialAsync("_StandingsPartial", Model)
-            </div>
-            <div id="scorersTable" style="display: none;"></div>
-        </div>
+        <div id="standingsTable">@await Html.PartialAsync("_StandingsPartial", Model)</div>
+        <div id="scorersTable" style="display: none;"></div>
     </div>
 </div>
+
 <script>
-    let currentDivisionFilter = '@currentDivision';
+    let currentDivision = '@currentDivision';
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        if (currentDivision) {
+            const response = await fetch(`/Home/Scorers?division=${encodeURIComponent(currentDivision)}`);
+            document.getElementById('scorersTable').innerHTML = await response.text();
+        }
+    });
+
+    function filterDivision(division) {
+        currentDivision = division;
+        document.getElementById('divisionDisplay').textContent = 'Division ' + division.replace(' DIVISION', '');
+        const view = document.querySelector('input[name="view"]:checked').id === 'viewStandings' ? 'standings' : 'scorers';
+        loadView(view, division);
+    }
+
+    async function toggleView(view) {
+        await loadView(view, currentDivision);
+    }
+
+    async function loadView(view, division) {
+        const standingsTable = document.getElementById('standingsTable');
+        const scorersTable = document.getElementById('scorersTable');
+        const url = view === 'standings' ? `/Home/Standings?division=${encodeURIComponent(division)}` : `/Home/Scorers?division=${encodeURIComponent(division)}`;
+        const response = await fetch(url);
+        const html = await response.text();
+
+        if (view === 'standings') {
+            standingsTable.innerHTML = html;
+            standingsTable.style.display = 'block';
+            scorersTable.style.display = 'none';
+        } else {
+            scorersTable.innerHTML = html;
+            standingsTable.style.display = 'none';
+            scorersTable.style.display = 'block';
+        }
+    }
 </script>
