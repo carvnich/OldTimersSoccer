@@ -1,78 +1,84 @@
 ﻿@model List<OldTimersSoccer.Models.Standing>
 @{
-    var currentLeague = ViewBag.League as string ?? "Regular Season";
-    var currentDivision = ViewBag.Division as string ?? (currentLeague switch { "Spence Cup" => "SP. CUP A", "Challenge Cup" => "CH. CUP A", _ => "A DIVISION" });
-    var displayDivision = currentDivision?.Replace(" DIVISION", "").Replace("CH. CUP ", "").Replace("SP. CUP ", "");
-    var leagues = new[] { "Regular Season", "Spence Cup", "Challenge Cup" };
-    var regularDivisions = new[] { "A DIVISION", "B DIVISION", "C DIVISION", "D DIVISION", "E DIVISION" };
-    var spenceDivisions = new[] { "SP. CUP A", "SP. CUP B" };
-    var challengeDivisions = new[] { "CH. CUP A", "CH. CUP B", "CH. CUP C", "CH. CUP D", "CH. CUP E" };
+	var currentLeague = ViewBag.League as string ?? "Regular Season";
+	var currentDivision = ViewBag.Division as string ?? (currentLeague switch { "Spence Cup" => "SP. CUP A", "Challenge Cup" => "CH. CUP A", _ => "A DIVISION" });
+	var displayDivision = currentDivision?.Replace(" DIVISION", "").Replace("CH. CUP ", "").Replace("SP. CUP ", "");
+	var leagues = new[] { "Regular Season", "Spence Cup", "Challenge Cup" };
+	var regularDivisions = new[] { "A DIVISION", "B DIVISION", "C DIVISION", "D DIVISION", "E DIVISION" };
+	var spenceDivisions = new[] { "SP. CUP A", "SP. CUP B" };
+	var challengeDivisions = new[] { "CH. CUP A", "CH. CUP B", "CH. CUP C", "CH. CUP D", "CH. CUP E" };
 }
 
 <div class="position-relative overflow-hidden" style="height: 35vh; background-image: url('/images/hero4.png'); background-size: cover; background-position: center;">
-    <div class="position-absolute bottom-0 start-0 w-100 d-flex justify-content-between align-items-end p-4 text-white">
-        <h1 class="display-2">Old Timers Soccer League</h1>
-        <div class="text-end fs-5">
-            <p class="m-0">Hamilton Italian Centre</p><p class="m-0">420 Crerar Dr</p><p class="m-0">Hamilton, ON L9A 5K3</p><p class="m-0">hdotsl@gmail.com</p>
-        </div>
-    </div>
+	<div class="position-absolute bottom-0 start-0 w-100 d-flex justify-content-between align-items-end p-4 text-white">
+		<h1 class="display-1 fw-semibold">OTSL</h1>
+		<div class="text-end fs-5">
+			<p class="m-0">Hamilton Italian Centre</p><p class="m-0">420 Crerar Dr</p><p class="m-0">Hamilton, ON L9A 5K3</p><p class="m-0">hdotsl@gmail.com</p>
+		</div>
+	</div>
 </div>
 <div class="container-fluid px-4">
-    <div class="py-3">
-        <div class="btn-group w-100 mb-3" role="group">
-            @foreach (var league in leagues)
-            {
-                <input type="radio" class="btn-check" name="league" id="@league.Replace(" ", "")" value="@league" @(league == currentLeague ? "checked" : "") onchange="filterLeague('@league')">
-                <label class="btn btn-outline-primary" for="@league.Replace(" ", "")">@league</label>
- }
-        </div>
-        <div id="regularDivisions" class="division-container justify-content-between overflow-auto @(currentLeague == "Regular Season" ? "active" : "")" style="gap: 0.5rem;">
-            @foreach (var division in regularDivisions)
-            {
-                var imageName = division.Replace(" DIVISION", "").ToLower(); var uniqueId = "regular-" + division.Replace(" ", "-");
-                <input type="radio" class="btn-check" name="division" id="@uniqueId" value="@division" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
-                <label class="btn btn-primary flex-fill mx-1" for="@uniqueId"><img src="~/images/div@(imageName).png" alt="@division" style="height: 100px;"></label>
- }
-        </div>
-        <div id="spenceDivisions" class="division-container justify-content-between overflow-auto @(currentLeague == "Spence Cup" ? "active" : "")" style="gap: 0.5rem;">
-            @foreach (var division in spenceDivisions)
-            {
-                var imageName = division.Replace("SP. CUP ", "").ToLower(); var uniqueId = "spence-" + division.Replace(" ", "-").Replace(".", "");
-                <input type="radio" class="btn-check" name="division" id="@uniqueId" value="@division" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
-                <label class="btn btn-primary flex-fill mx-1" for="@uniqueId"><img src="~/images/div@(imageName).png" alt="@division" style="height: 100px;"></label>
- }
-        </div>
-        <div id="challengeDivisions" class="division-container justify-content-between overflow-auto @(currentLeague == "Challenge Cup" ? "active" : "")" style="gap: 0.5rem;">
-            @foreach (var division in challengeDivisions)
-            {
-                var imageName = division.Replace("CH. CUP ", "").ToLower(); var uniqueId = "challenge-" + division.Replace(" ", "-").Replace(".", "");
-                <input type="radio" class="btn-check" name="division" id="@uniqueId" value="@division" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
-                <label class="btn btn-primary flex-fill mx-1" for="@uniqueId"><img src="~/images/div@(imageName).png" alt="@division" style="height: 100px;"></label>
- }
-        </div>
-    </div>
-    <div class="py-3">
-        <div class="text-center mb-3">
-            <h2 id="leagueDisplay">@currentLeague</h2>
-            <h3 id="divisionDisplay">Division @displayDivision</h3>
-            <h5>2025</h5>
-        </div>
-    </div>
-    <div class="pb-5">
-        <div id="scheduleCarousel" class="mb-5"></div>
-        <div class="d-flex justify-content-center mb-4">
-            <div class="btn-group">
-                <input type="radio" class="btn-check" name="view" id="viewStandings" checked onchange="toggleView('standings')"><label class="btn btn-outline-primary" for="viewStandings">Standings</label>
-                <input type="radio" class="btn-check" name="view" id="viewScorers" onchange="toggleView('scorers')"><label class="btn btn-outline-primary" for="viewScorers">Top Scorers</label>
-            </div>
-        </div>
-        <div class="d-flex justify-content-center">
-            <div id="standingsTable">@await Html.PartialAsync("_StandingsPartial", Model)</div>
-            <div id="scorersTable" style="display: none;"></div>
-        </div>
-    </div>
+	<div class="py-3">
+		<div class="btn-group w-100 mb-3" role="group">
+			@foreach (var league in leagues)
+			{
+				<input type="radio" class="btn-check" name="league" id="@league.Replace(" ", "")" value="@league" @(league == currentLeague ? "checked" : "") onchange="filterLeague('@league')">
+				<label class="btn btn-outline-primary fs-4" for="@league.Replace(" ", "")">@league</label>
+			}
+		</div>
+		<div id="regularDivisions" class="division-container row row-cols-2 row-cols-sm-3 row-cols-md-5 g-2 @(currentLeague == "Regular Season" ? "active" : "")">
+			@foreach (var division in regularDivisions)
+			{
+				var imageName = division.Replace(" DIVISION", "").ToLower(); var uniqueId = "regular-" + division.Replace(" ", "-");
+				<div class="col">
+					<input type="radio" class="btn-check" name="division" id="@uniqueId" value="@division" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
+					<label class="btn btn-primary w-100" for="@uniqueId"><img src="~/images/div@(imageName).png" alt="@division" style="height: 120px;"></label>
+				</div>
+			}
+		</div>
+		<div id="spenceDivisions" class="division-container row row-cols-2 row-cols-sm-2 g-2 @(currentLeague == "Spence Cup" ? "active" : "")">
+			@foreach (var division in spenceDivisions)
+			{
+				var imageName = division.Replace("SP. CUP ", "").ToLower(); var uniqueId = "spence-" + division.Replace(" ", "-").Replace(".", "");
+				<div class="col">
+					<input type="radio" class="btn-check" name="division" id="@uniqueId" value="@division" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
+					<label class="btn btn-primary w-100" for="@uniqueId"><img src="~/images/div@(imageName).png" alt="@division" style="height: 120px;"></label>
+				</div>
+			}
+		</div>
+		<div id="challengeDivisions" class="division-container row row-cols-2 row-cols-sm-3 row-cols-md-5 g-2 @(currentLeague == "Challenge Cup" ? "active" : "")">
+			@foreach (var division in challengeDivisions)
+			{
+				var imageName = division.Replace("CH. CUP ", "").ToLower(); var uniqueId = "challenge-" + division.Replace(" ", "-").Replace(".", "");
+				<div class="col">
+					<input type="radio" class="btn-check" name="division" id="@uniqueId" value="@division" @(division == currentDivision ? "checked" : "") onchange="filterDivision('@division')">
+					<label class="btn btn-primary w-100" for="@uniqueId"><img src="~/images/div@(imageName).png" alt="@division" style="height: 120px;"></label>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="py-3">
+		<div class="text-center mb-3">
+			<h2 id="leagueDisplay">@currentLeague</h2>
+			<h3 id="divisionDisplay">Division @displayDivision</h3>
+			<h5>2025</h5>
+		</div>
+	</div>
+	<div class="pb-5">
+		<div id="scheduleCarousel" class="mb-5"></div>
+		<div class="d-flex justify-content-center mb-4">
+			<div class="btn-group">
+				<input type="radio" class="btn-check" name="view" id="viewStandings" checked onchange="toggleView('standings')"><label class="btn btn-outline-primary" for="viewStandings">Standings</label>
+				<input type="radio" class="btn-check" name="view" id="viewScorers" onchange="toggleView('scorers')"><label class="btn btn-outline-primary" for="viewScorers">Top Scorers</label>
+			</div>
+		</div>
+		<div class="d-flex justify-content-center">
+			<div id="standingsTable">@await Html.PartialAsync("_StandingsPartial", Model)</div>
+			<div id="scorersTable" style="display: none;"></div>
+		</div>
+	</div>
 </div>
 
 <script>
-    window.soccerApp = { currentDivision: '@currentDivision', currentLeague: '@currentLeague' };
+	window.soccerApp = { currentDivision: '@currentDivision', currentLeague: '@currentLeague' };
 </script>

@@ -10,12 +10,26 @@ const scheduleCarousel = (function () {
         if (prevBtn) prevBtn.disabled = currentIndex === 0;
         if (nextBtn) nextBtn.disabled = currentIndex === totalDates - 1;
     }
+    function paginateToNext() {
+        const slides = document.querySelectorAll('.date-slide');
+        const now = new Date();
+        let nextIndex = 0;
+        slides.forEach((slide, index) => {
+            const matchDateStr = slide.dataset.matchDate;
+            if (matchDateStr) {
+                const matchDate = new Date(matchDateStr);
+                if (matchDate > now && nextIndex === 0) nextIndex = index;
+            }
+        });
+        currentIndex = nextIndex;
+        update();
+    }
     return {
         previous: () => { if (currentIndex > 0) { currentIndex--; update(); } },
         next: () => { if (currentIndex < totalDates - 1) { currentIndex++; update(); } },
         init: () => {
             const totalDatesInput = document.getElementById('totalDates');
-            if (totalDatesInput) { totalDates = parseInt(totalDatesInput.value); currentIndex = 0; update(); }
+            if (totalDatesInput) { totalDates = parseInt(totalDatesInput.value); currentIndex = 0; paginateToNext(); }
         }
     };
 })();

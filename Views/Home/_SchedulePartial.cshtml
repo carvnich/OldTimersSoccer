@@ -1,66 +1,58 @@
 ﻿@model List<OldTimersSoccer.Models.Match>
 @{
-    var currentDivision = ViewBag.Division as string;
-    var matchesByDate = Model.Where(m => m.DivisionId == currentDivision).GroupBy(m => m.GameDate).OrderBy(g => g.Key).ToList();
+	var currentDivision = ViewBag.Division as string;
+	var matchesByDate = Model.Where(m => m.DivisionId == currentDivision).GroupBy(m => m.GameDate).OrderBy(g => g.Key).ToList();
 }
-
 <div class="position-relative">
-    <div class="container-fluid">
-        @if (matchesByDate.Any())
-        {
-            <div class="d-flex align-items-center justify-content-end mb-3">
-                <div>
-                    <button class="btn btn-primary" onclick="scheduleCarousel.previous()" id="prevBtn"><i class="bi bi-chevron-left"></i></button>
-                    <button class="btn btn-primary" onclick="scheduleCarousel.next()" id="nextBtn"><i class="bi bi-chevron-right"></i></button>
-                </div>
-            </div>
-            <div id="dateCarousel">
-                @for (int i = 0; i < matchesByDate.Count; i++)
-                {
-                    var dateGroup = matchesByDate[i];
-                    var matches = dateGroup.OrderBy(m => m.GameTime).ToList();
-                    <div class="date-slide @(i == 0 ? "active" : "")" data-index="@i">
-                        <div class="row g-2">
-                            @foreach (var match in matches)
-                            {
-                                var gameTime = DateTime.Parse(match.GameTime).ToString("h:mm tt");
-                                <div class="col-12 col-md-6 col-lg-3">
-                                    <div class="card bg-primary h-100">
-                                        <div class="card-body fs-5">
-                                            <div class="d-flex justify-content-between align-items-start mb-3">
-                                                <div>@DateTime.Parse(match.GameDate).ToString("MMMM dd, yyyy")</div>
-                                                <div>@gameTime</div>
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                                    <span>@match.HomeTeam</span>
-                                                    @if (!string.IsNullOrEmpty(match.HomeTeamScore))
-                                                    {
-                                                        <strong class="bg-light rounded-1 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">@match.HomeTeamScore</strong>
-                                                    }
-                                                </div>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span>@match.AwayTeam</span>
-                                                    @if (!string.IsNullOrEmpty(match.AwayTeamScore))
-                                                    {
-                                                        <strong class="bg-light rounded-1 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">@match.AwayTeamScore</strong>
-                                                    }
-                                                </div>
-                                            </div>
-                                            <small><i class="bi bi-geo-alt"></i> @match.FieldName</small>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-            </div>
-            <input type="hidden" id="totalDates" value="@matchesByDate.Count" />
-        }
-        else
-        {
-            <div class="alert alert-info">No matches scheduled</div>
-        }
-    </div>
+	<div class="container-fluid">
+		@if (matchesByDate.Any())
+		{
+			<div class="d-flex align-items-center justify-content-end mb-3">
+				<div><button class="btn btn-primary" onclick="scheduleCarousel.previous()" id="prevBtn"><i class="bi bi-chevron-left"></i></button><button class="btn btn-primary" onclick="scheduleCarousel.next()" id="nextBtn"><i class="bi bi-chevron-right"></i></button></div>
+			</div>
+			<div id="dateCarousel">
+				@for (int i = 0; i < matchesByDate.Count; i++)
+				{
+					var dateGroup = matchesByDate[i];
+					var matches = dateGroup.OrderBy(m => m.GameTime).ToList();
+					var matchCount = matches.Count;
+					var centerClass = matchCount < 4 ? "justify-content-center" : "";
+					var matchDate = DateTime.Parse(dateGroup.Key);
+					<div class="date-slide @(i == 0 ? "active" : "")" data-index="@i" data-match-date="@matchDate.ToString("yyyy-MM-dd")">
+						<div class="row g-2 @centerClass">
+							@foreach (var match in matches)
+							{
+								var gameTime = DateTime.Parse(match.GameTime).ToString("h:mm tt");
+								<div class="col-12 col-md-6 col-lg-3">
+									<div class="card bg-primary h-100">
+										<div class="card-body fs-5">
+											<div class="d-flex justify-content-between align-items-start mb-3"><div>@DateTime.Parse(match.GameDate).ToString("MMMM dd, yyyy")</div><div>@gameTime</div></div>
+											<div class="mb-3">
+												<div class="d-flex justify-content-between align-items-center mb-1">
+													<span>@match.HomeTeam</span>@if (!string.IsNullOrEmpty(match.HomeTeamScore)) {
+													<strong class="bg-light rounded-1 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">@match.HomeTeamScore</strong>
+												}
+											</div>
+											<div class="d-flex justify-content-between align-items-center">
+												<span>@match.AwayTeam</span>@if (!string.IsNullOrEmpty(match.AwayTeamScore)) {
+												<strong class="bg-light rounded-1 d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">@match.AwayTeamScore</strong>
+											}
+										</div>
+									</div>
+									<small><i class="bi bi-geo-alt"></i> @match.FieldName</small>
+								</div>
+							</div>
+						</div>
+					}
+				</div>
+			</div>
+						}
+		</div>
+		<input type="hidden" id="totalDates" value="@matchesByDate.Count" />
+				}
+				else
+		{
+			<div class="alert alert-info">No matches scheduled</div>
+		}
+	</div>
 </div>
